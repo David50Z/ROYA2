@@ -73,23 +73,23 @@ from vonage_sms import SmsMessage
 import keys
 import SQLFuntime
 import requests
-
+text_key=os.environ["TEXT_KEY"]
 def sendInitialSMS(num: str):
     resp = requests.post('https://textbelt.com/text', {
     'phone': str(num),
     'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
-    'key': 'f916ba45a7370060efd35edf8ee15bd4150559c4mO5Qc1cvtI0R6zRDC7nxzr0i7',
-    'replyWebhookUrl': 'https://mailing-florida-alice-nitrogen.trycloudflare.com/inbound',
+    'key': text_key,
+    'replyWebhookUrl': 'https://lobby-entered-qui-feelings.trycloudflare.com/inbound',
     })
 
-    SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?")
+    SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
     return resp
 
 def sendSMS(num: str, text: str):
     resp = requests.post('https://textbelt.com/text', {
     'phone': str(num),
     'message': text,
-    'key': 'f916ba45a7370060efd35edf8ee15bd4150559c4mO5Qc1cvtI0R6zRDC7nxzr0i7',
+    'key': text_key,
     'replyWebhookUrl': 'https://short-politicians-arabia-booking.trycloudflare.com/inbound',
     })
     return resp
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     #sendSMS("+17256001255", "Hello from Vonage + Python")
     
 
-
+                            #7028247180
     resp = sendInitialSMS(str(7256001255))
     
     print(resp.json)

@@ -52,7 +52,10 @@ async def inbound_message(payload: TextbeltReply):
     #     "api_key": q.get("api-key"),
     # }
     print("From inbound. text is this: " + payload.text + "\n\n" + payload.fromNumber + "\n\n\n")
-    SQLFuntime.insert_message(payload.fromNumber, "customer:" + payload.text)
+    res = SQLFuntime.insert_message(payload.fromNumber, "customer:" + payload.text)
+    if res == False:
+        print("No number found.")
+        return ValueError
     Response = ai_reply(payload.fromNumber)
     sendSMS(payload.fromNumber, Response)
     

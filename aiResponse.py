@@ -3,8 +3,8 @@ import os
 from prompts import basic
 import SQLFuntime
 
-# Reads OPENAI_API_KEY from your environment
-client = OpenAI(api_key = "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")
+# Reads OPENAI_API_KEY from your environment)
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
             #user_text: str, 
 def ai_reply(num) -> str:
     messagesArr = SQLFuntime.get_messages(num)
@@ -12,6 +12,8 @@ def ai_reply(num) -> str:
 
     for message in messagesArr:
         messages = messages + message + "\n\n"
+
+    print("From aiResponse.py \n\n\n " + f"{basic.basicPromt}  {messages}")
     resp = client.responses.create(
         model="gpt-5",               # pick your model
         input=f"{basic.basicPromt}  {messages}"
