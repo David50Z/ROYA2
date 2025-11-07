@@ -70,7 +70,6 @@
 import os
 from vonage import Vonage, Auth
 from vonage_sms import SmsMessage
-import keys
 import SQLFuntime
 import requests
 text_key=os.environ["TEXT_KEY"]
