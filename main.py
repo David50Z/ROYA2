@@ -81,5 +81,6 @@ async def inbound_message(request: Request):
 
 @app.get("/text")
 async def outbound_message(request: Request, num: int):
-    sendInitialSMS(num)
+    res = sendInitialSMS(num)
+    return res
     

@@ -75,6 +75,7 @@ import requests
 text_key=os.environ["TEXT_KEY"]
 url = os.environ["URL"]
 def sendInitialSMS(num: str):
+    print(text_key)
     resp = requests.post('https://textbelt.com/text', {
     'phone': str(num),
     'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
