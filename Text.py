@@ -74,12 +74,13 @@ import keys
 import SQLFuntime
 import requests
 text_key=os.environ["TEXT_KEY"]
+url = os.environ["URL"]
 def sendInitialSMS(num: str):
     resp = requests.post('https://textbelt.com/text', {
     'phone': str(num),
     'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
     'key': text_key,
-    'replyWebhookUrl': 'https://web-production-1bf66.up.railway.app/inbound',
+    'replyWebhookUrl': url + '/inbound',
     })
 
     SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
@@ -90,7 +91,7 @@ def sendSMS(num: str, text: str):
     'phone': str(num),
     'message': text,
     'key': text_key,
-    'replyWebhookUrl': 'https://web-production-1bf66.up.railway.app/inbound',
+    'replyWebhookUrl': url + '/inbound',
     })
     return resp
     
