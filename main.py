@@ -77,4 +77,9 @@ async def inbound_message(payload: TextbeltReply):
 @app.get("/test")
 async def inbound_message(request: Request):
     return SQLFuntime.find_numbers()
+
+
+@app.get("/text")
+async def outbound_message(request: Request, num: int):
+    sendSMS(num)
     
