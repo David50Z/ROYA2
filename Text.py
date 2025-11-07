@@ -84,7 +84,7 @@ def sendInitialSMS(num: str):
     })
 
     SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
-    return resp
+    return resp.text
 
 def sendSMS(num: str, text: str):
     resp = requests.post('https://textbelt.com/text', {
@@ -93,7 +93,7 @@ def sendSMS(num: str, text: str):
     'key': text_key,
     'replyWebhookUrl': url + '/inbound',
     })
-    return resp
+    return resp.text
     
 
 if __name__ == "__main__":
