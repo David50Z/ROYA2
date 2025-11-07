@@ -80,7 +80,7 @@ def sendInitialSMS(num: str):
     'phone': str(num),
     'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
     'key': text_key,
-    'replyWebhookUrl': url + '/inbound',
+    
     })
 
     SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
