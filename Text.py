@@ -79,7 +79,7 @@ def sendInitialSMS(num: str):
     'phone': str(num),
     'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
     'key': text_key,
-    'replyWebhookUrl': 'https://lobby-entered-qui-feelings.trycloudflare.com/inbound',
+    'replyWebhookUrl': 'https://web-production-1bf66.up.railway.app/inbound',
     })
 
     SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
@@ -90,7 +90,7 @@ def sendSMS(num: str, text: str):
     'phone': str(num),
     'message': text,
     'key': text_key,
-    'replyWebhookUrl': 'https://short-politicians-arabia-booking.trycloudflare.com/inbound',
+    'replyWebhookUrl': 'https://web-production-1bf66.up.railway.app/inbound',
     })
     return resp
     
