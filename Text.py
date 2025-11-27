@@ -73,26 +73,99 @@ from vonage_sms import SmsMessage
 import SQLFuntime
 import requests
 text_key=os.environ["TEXT_KEY"]
+textbee_key = os.environ["TEXTBEE_KEY"]
+bearer = os.environ["BEARER"]
 url = os.environ["URL"]
+message = "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?"
 def sendInitialSMS(num: str):
-    print(text_key)
-    resp = requests.post('https://textbelt.com/text', {
-    'phone': str(num),
-    'message': "It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?",
-    'key': text_key,
-    
-    })
 
-    SQLFuntime.create_number(num, "Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?")
+    # headers = {
+    #     "message": "Yo",
+    #     "recipients": [
+    #         "7256001255"
+    #     ]
+    # }
+
+    headers = {
+        "x-api-key": textbee_key,
+         "Authorization": f"Bearer {bearer}",
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    }
+
+    payload ={
+            "message": "It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?",
+            "recipients": [
+            num
+        ]
+    
+    }
+
+    # headers = {
+    # 'x-api-key': API_KEY,
+    # },
+
+    #print(text_key)
+    # resp = requests.post('https://textbelt.com/text', {
+    # 'phone': str(num),
+    # 'message': "It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?",
+    # 'key': text_key,
+    # 'replyWebhookUrl': url + '/inbound',
+    
+    # })
+
+
+    # resp = requests.post('https://api.textbee.dev/api/v1/gateway/devices/691adbde82033f160912e113/sendSMS', {
+    #         "message": "Yo",
+    #         "recipients": [
+    #         "7256001255"
+    #     ]
+    
+    # }, {
+    #     "headers": {
+    #     'x-api-key': textbee_key,
+    # }
+    # })
+
+
+    resp = requests.post('https://api.textbee.dev/api/v1/gateway/devices/691adbde82033f160912e113/sendSMS', 
+                         json=payload,
+                         headers=headers
+                         )
+
+
+    SQLFuntime.create_number(num, message)
     return resp.text
 
 def sendSMS(num: str, text: str):
-    resp = requests.post('https://textbelt.com/text', {
-    'phone': str(num),
-    'message': text,
-    'key': text_key,
-    'replyWebhookUrl': url + '/inbound',
-    })
+    # resp = requests.post('https://textbelt.com/text', {
+    # 'phone': str(num),
+    # 'message': text,
+    # 'key': text_key,
+    # 'replyWebhookUrl': url + '/inbound',
+
+    
+    # })
+
+    headers = {
+        "x-api-key": textbee_key,
+         "Authorization": f"Bearer {bearer}",
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+    }
+
+    payload ={
+            "message": text,
+            "recipients": [
+            "7256001255"
+        ]
+    
+    }
+
+    resp = requests.post('https://api.textbee.dev/api/v1/gateway/devices/691adbde82033f160912e113/sendSMS', 
+                    json=payload,
+                    headers=headers
+                    )
     return resp.text
     
 
@@ -101,6 +174,6 @@ if __name__ == "__main__":
     
 
                             #7028247180
-    resp = sendInitialSMS(str(7256001255))
+    resp = sendInitialSMS(str(17024478136))
     
-    print(resp.json)
+    print(resp)

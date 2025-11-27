@@ -2,6 +2,7 @@ from aiResponse import ai_reply
 import SQLFuntime
 
 message = """"It’s Sarah from Meridian Health. Is this the same John that got a quote from us in the last couple of months?"""
+SQLFuntime.delete_number("+1777")
 SQLFuntime.create_number(777, message)
 while True:
     user = input("You: ").strip()

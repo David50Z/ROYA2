@@ -3,6 +3,10 @@ import psycopg2
 import time
 from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
+from passlib.context import CryptContext
+from fastapi import HTTPException
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 load_dotenv()
@@ -41,8 +45,9 @@ def find_numbers():
     conn.close()
     return rows
 
+
+
 def insert_message(num, message):
-    print(num)
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(
@@ -68,7 +73,7 @@ def get_messages(num):
     )
     row = cur.fetchall()
     conn.close()
-    print(row)
+    #print(row)
     flat = [msg for (inner,) in row for msg in inner]
     return flat
 
@@ -90,6 +95,19 @@ def create_number(num, message):
     conn.close()
 
     return True
+
+def delete_number(number):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        DELETE FROM numbers
+        WHERE number = %s
+        """,
+        (number,)   # parameters must be a tuple
+    )
+    conn.commit()  # IMPORTANT
+    conn.close()
 
 
 def get_number_or_create_number(num, message):
@@ -116,7 +134,124 @@ def get_number_or_create_number(num, message):
     else:
         conn.close()
         return row
+    
+def resetNumber(num):
+    message = ["Sarah: It’s Sarah from Meridian Health. Is this the same Kevin that got a quote from us in the last couple of months?"]
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE numbers SET messages = %s WHERE number = %s",
+        (message, "+1" + str(num),)
+    )
+    conn.commit()
+    conn.close()
+
+    return True
+
+
+#Amins
+def create_admin(email, password, prompt):
+    conn = get_connection()
+    cur = conn.cursor()
+    id = int(time.time() * 1000)
+    hashed_password = pwd_context.hash(password)
+    cur.execute(
+        """
+        INSERT INTO administrators VALUES (%s, %s, %s, %s)
+        """, (id, email, hashed_password, prompt)
+        )
+    conn.commit()
+    conn.close()
+
+    return True
+
+
+def get_admin(email, password):
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    cur.execute(
+        """
+        SELECT * FROM administrators where email = %s
+        """, (email,)
+        )
+    row = cur.fetchall()
+    print(row)
+    stored_hash = row[0][2]
+
+    if not pwd_context.verify(password, stored_hash):
+        print("invalid password")
+        raise HTTPException(401, "invalid credentials")
+
+    conn.commit()
+    conn.close()
+    return row
+
+def get_admin_By_Id(id):
+    conn = get_connection()
+    cur = conn.cursor()
+    
+    cur.execute(
+        """
+        SELECT * FROM administrators where id = %s
+        """, (id,)
+        )
+    row = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+    return row
+
+def checkEmail(email):
+    #print(name)
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT email FROM administrators WHERE email = %s",
+        (email,))
+    row = cur.fetchall()
+    conn.commit()
+    conn.close()
+    print(row)
+
+    if row is None or len(row) !=0:
+        print("Twas false")
+        return False
+    else:
+        return True
+    
+def getPrompt(email):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT prompt FROM administrators WHERE email = %s",
+        (email,))
+    row = cur.fetchall()
+    conn.commit()
+    conn.close()
+    print(row)
+
+    if row is None or len(row) !=0:
+        print("Twas false")
+        return False
+    else:
+        return True   
+
+def updatePrompt(email, prompt):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "UPDATE administrators SET prompt = %s WHERE email = %s",
+        (prompt, email))
+    conn.commit()
+    conn.close()
+
+    return True
+
         
         
-print(get_messages("+1777"))
+#print(get_messages("+1777"))
 #print(insert_message(7256001255, "."))
+
+
+

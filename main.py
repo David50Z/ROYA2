@@ -39,7 +39,8 @@ async def inbound_message(request: Request):
 
 
 @app.post("/inbound")
-async def inbound_message(payload: TextbeltReply):
+async def inbound_message(request: Request):
+    data = await request.json()
     # q = request.query_params  # starlette.datastructures.QueryParams
     # payload = {
     #     "from": q.get("msisdn"),
@@ -51,19 +52,25 @@ async def inbound_message(payload: TextbeltReply):
     #     "type": q.get("type"),
     #     "api_key": q.get("api-key"),
     # }
-    print("From inbound. text is this: " + payload.text + "\n\n" + payload.fromNumber + "\n\n\n")
-    res = SQLFuntime.insert_message(payload.fromNumber, "customer:" + payload.text)
-    if res == False:
-        print("No number found.")
-        return ValueError
-    Response = ai_reply(payload.fromNumber)
-    sendSMS(payload.fromNumber, Response)
+    if data["sender"] != "+17024478136" or data["sender"] != "+17028247180" or data["sender"] != "+17256001255":
+
+        print("From inbound. text is this: " + data["message"] + "\n\n" + data["sender"] + "\n\n\n")
+        res = SQLFuntime.insert_message(data["sender"], "customer:" + data["message"])
+        if res == False:
+            print("No number found.")
+            return ValueError
+        Response = ai_reply(data["sender"])
+        sendSMS(data["sender"], Response)
+        
+
+        print("From inbound. messages is this: " + str(SQLFuntime.get_messages(data["sender"])) + "\n\n")
+
+        print(f"[Textbelt reply] textId={data['smsId']} from={data['sender']} text={data['message']}")
+        return {"ok": True}
     
-
-    print("From inbound. messages is this: " + str(SQLFuntime.get_messages(payload.fromNumber)) + "\n\n")
-
-    print(f"[Textbelt reply] textId={payload.textId} from={payload.fromNumber} text={payload.text}")
-    return {"ok": True}
+    else:
+        print("Invalid sender")
+        return {"ok": "Invalid sender"}
 
     #messages = sendSMS(payload["from"], payload["text"])
     #print(payload)
@@ -74,8 +81,10 @@ async def inbound_message(payload: TextbeltReply):
 
 
 
-@app.get("/test")
+@app.post("/test")
 async def inbound_message(request: Request):
+    data = await request.json()
+    print("JSON BODY:", data)
     return SQLFuntime.find_numbers()
 
 
@@ -83,4 +92,78 @@ async def inbound_message(request: Request):
 async def outbound_message(request: Request, num: int):
     res = sendInitialSMS(num)
     return {"return": str(res)}
+    
+
+@app.get("/test-ai")
+async def outbound_message(request: Request):
+    res = ai_reply("+7256001255")
+    return {"return": str(res)}
+    
+
+@app.post("/create-account")
+async def create_account(
+    email: str = Body(...), 
+    password: str = Body(...),
+    prompt: str = Body(...),
+    ):
+
+    res = SQLFuntime.checkEmail(email)
+
+    if res == False:
+         print("Twas double false from main.py")
+         return False
+    else:
+
+        row = SQLFuntime.create_admin(email, password, prompt)
+        return row
+    
+@app.post("/reset-number")
+async def resetText(num: int = Body(...)):
+    res = SQLFuntime.resetNumber(num)
+    return res
+
+
+
+@app.post("/login")
+async def create_account(
+    email: str = Body(...), 
+    password: str = Body(...),
+    ):
+    row = SQLFuntime.get_admin(email, password)
+    return row
+
+@app.post("/get-admin-id")
+async def create_account(
+    id: str = Body(...), 
+    ):
+    row = SQLFuntime.get_admin_By_Id(int(id))
+    return row
+
+@app.get("/check-email")
+async def checkEmail(email: str = Body(...),):
+     res = SQLFuntime.checkEmail(email)
+
+     if res == False:
+         return False
+     else:
+         return True
+     
+@app.get("/get-prompt")
+async def getPrompt(email: str = Body(...),):
+     res = SQLFuntime.getPrompt(email)
+
+     if res == False:
+         return False
+     else:
+         return res
+     
+@app.post("/update-prompt")
+async def getPrompt(email: str = Body(...), prompt: str = Body(...),):
+     res = SQLFuntime.updatePrompt(email, prompt)
+
+     if res == False:
+         return False
+     else:
+         return res
+     
     
